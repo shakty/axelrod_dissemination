@@ -28,12 +28,12 @@ b = 9;
 % Randomly generate a matrix of (n*f)*(n*f) = (10*5)*(10*5) of uniformly
 % distributed numbers with values in the range [a,b] = [0,9]
 % where x = a + (a+b)*rand(n*f,n*f).
-matrix_traits = a + (a+b)*rand(n,n*f);
+traits = a + (a+b)*rand(n,n*f);
 % Round up to get rid of decimals.
-matrix_traits = floor(matrix_traits);
+traits = floor(traits);
 
 % Original matrix.
-original_matrix = matrix_traits;
+original_matrix = traits;
 
 
 % 1.3 Special regions (either corner or edge).
@@ -90,7 +90,7 @@ NSim = 530000;
 neighbor_vec = zeros(NSim,1);
 vector_start_sum = 1 : 5 : tn;
 vector_stop_sum = 5 : 5 : tn;
-matrix_traits_sum = zeros(n,n);
+traits_sum = zeros(n,n);
 color_limits = [0 50];
 for sim = 1 : NSim
     
@@ -99,7 +99,7 @@ for sim = 1 : NSim
     
     % Select radomly a region (from 1 to 100).
     region_active = floor(1 + tn*rand(1));
-    % Where is this region placed in the matrix_traits? 
+    % Where is this region placed in the traits? 
     rest_position_divided_by_0 = rem(region_active,n);
     if rest_position_divided_by_0 == 0
         % Column.
@@ -115,7 +115,7 @@ for sim = 1 : NSim
     
 
     % What are the traits of the active region? (A vector of length 5).
-    traits_active = matrix_traits(row_active_region,(column_active_region-1)*f+1:column_active_region*f);
+    traits_active = traits(row_active_region,(column_active_region-1)*f+1:column_active_region*f);
     
     %% Select randomly a neighbor of the active region
     % Is the active region in a special position?
@@ -124,16 +124,16 @@ for sim = 1 : NSim
         neighbor_region = floor(1 + 4*rand(1));
         % Is the neighbor in the West? (Same row, column to the left).
         if neighbor_region == 1 
-            traits_neighbor = matrix_traits(row_active_region,(column_active_region-2)*f+1:(column_active_region-1)*f);
+            traits_neighbor = traits(row_active_region,(column_active_region-2)*f+1:(column_active_region-1)*f);
         % Is the neighbor in the North? (Row above, same column).
         elseif neighbor_region == 2 
-            traits_neighbor = matrix_traits(row_active_region-1,(column_active_region-1)*f+1:column_active_region*f);
+            traits_neighbor = traits(row_active_region-1,(column_active_region-1)*f+1:column_active_region*f);
         % Is the neighbor in the East? (Same row, column to the right).
         elseif neighbor_region == 3
-            traits_neighbor = matrix_traits(row_active_region,column_active_region*f+1:(column_active_region+1)*f);
+            traits_neighbor = traits(row_active_region,column_active_region*f+1:(column_active_region+1)*f);
         % Is the neighbor in the South? (Row below, same column).
         else
-            traits_neighbor = matrix_traits(row_active_region+1,(column_active_region-1)*f+1:column_active_region*f);
+            traits_neighbor = traits(row_active_region+1,(column_active_region-1)*f+1:column_active_region*f);
         end
         
         
@@ -149,34 +149,34 @@ for sim = 1 : NSim
         if region_active == corner_NW
             % Is the neighbor in the South? (Row below, same column)
             if neighbor_region == 1 
-                traits_neighbor = matrix_traits(row_active_region+1,(column_active_region-1)*f+1:column_active_region*f);
+                traits_neighbor = traits(row_active_region+1,(column_active_region-1)*f+1:column_active_region*f);
             % Is the neighbor in the East? (Same row, next column)
             else
-                traits_neighbor = matrix_traits(row_active_region,column_active_region*f+1:(column_active_region+1)*f);
+                traits_neighbor = traits(row_active_region,column_active_region*f+1:(column_active_region+1)*f);
             end
         elseif region_active == corner_NE
             % Is the neighbor in the South? (Row below, same column)
             if neighbor_region == 1 
-                traits_neighbor = matrix_traits(row_active_region+1,(column_active_region-1)*f+1:column_active_region*f);
+                traits_neighbor = traits(row_active_region+1,(column_active_region-1)*f+1:column_active_region*f);
             % Is the neighbor in the West? (Same row, previous column)
             else
-                traits_neighbor = matrix_traits(row_active_region,(column_active_region-2)*f+1:(column_active_region-1)*f);
+                traits_neighbor = traits(row_active_region,(column_active_region-2)*f+1:(column_active_region-1)*f);
             end
         elseif region_active == corner_SE
             % Is the neighbor in the North? (Row above, same column)          
             if neighbor_region == 1
-                traits_neighbor = matrix_traits(row_active_region-1,(column_active_region-1)*f+1:column_active_region*f);
+                traits_neighbor = traits(row_active_region-1,(column_active_region-1)*f+1:column_active_region*f);
             % Is the neighbor to the West? (Same row, previous column)
             else 
-                traits_neighbor = matrix_traits(row_active_region,(column_active_region-2)*f+1:(column_active_region-1)*f);
+                traits_neighbor = traits(row_active_region,(column_active_region-2)*f+1:(column_active_region-1)*f);
             end
         elseif region_active == corner_SW
             % Is the neighbor in the North? (Row above, same column)          
             if neighbor_region == 1
-                traits_neighbor = matrix_traits(row_active_region-1,(column_active_region-1)*f+1:column_active_region*f); 
+                traits_neighbor = traits(row_active_region-1,(column_active_region-1)*f+1:column_active_region*f); 
             % Is the neighbor in the East? (Same row, next column)
             else
-                traits_neighbor = matrix_traits(row_active_region,column_active_region*f+1:(column_active_region+1)*f);
+                traits_neighbor = traits(row_active_region,column_active_region*f+1:(column_active_region+1)*f);
             end 
         end
             
@@ -194,49 +194,49 @@ for sim = 1 : NSim
         if indie_edge_West == 0
             % Is the neighbor in the North? (Row above, same column)
             if neighbor_region == 1
-                traits_neighbor = matrix_traits(row_active_region-1,(column_active_region-1)*f+1:column_active_region*f);
+                traits_neighbor = traits(row_active_region-1,(column_active_region-1)*f+1:column_active_region*f);
             % Is the neighbor in the East? (Same row, column to the right)
             elseif neighbor_region == 2
-                traits_neighbor = matrix_traits(row_active_region,column_active_region*f+1:(column_active_region+1)*f);
+                traits_neighbor = traits(row_active_region,column_active_region*f+1:(column_active_region+1)*f);
             % Is the neighbor in the South? (Row below, same column)
             else
-               traits_neighbor = matrix_traits(row_active_region+1,(column_active_region-1)*f+1:column_active_region*f);
+               traits_neighbor = traits(row_active_region+1,(column_active_region-1)*f+1:column_active_region*f);
             end
             
         elseif indie_edge_North == 0
             % Is the neighbor in the West? (Same row, column to the left)
             if neighbor_region == 1
-                traits_neighbor = matrix_traits(row_active_region,(column_active_region-2)*f+1:(column_active_region-1)*f);
+                traits_neighbor = traits(row_active_region,(column_active_region-2)*f+1:(column_active_region-1)*f);
             % Is the neighbor in the East? (Same row, column to the right)
             elseif neighbor_region == 2
-                traits_neighbor = matrix_traits(row_active_region,column_active_region*f+1:(column_active_region+1)*f);
+                traits_neighbor = traits(row_active_region,column_active_region*f+1:(column_active_region+1)*f);
             % Is the neighbor to the South? (Row below, same column)
             else
-                traits_neighbor = matrix_traits(row_active_region+1,(column_active_region-1)*f+1:column_active_region*f);
+                traits_neighbor = traits(row_active_region+1,(column_active_region-1)*f+1:column_active_region*f);
             end
             
         elseif indie_edge_East == 0
             % Is the neighbor in the West? (Same row, column to the left)
             if neighbor_region == 1
-                traits_neighbor = matrix_traits(row_active_region,(column_active_region-2)*f+1:(column_active_region-1)*f);
+                traits_neighbor = traits(row_active_region,(column_active_region-2)*f+1:(column_active_region-1)*f);
             % Is the neighbor in the North? (Row above, same column)
             elseif neighbor_region == 2
-                traits_neighbor = matrix_traits(row_active_region-1,(column_active_region-1)*f+1:column_active_region*f);
+                traits_neighbor = traits(row_active_region-1,(column_active_region-1)*f+1:column_active_region*f);
             % Is the neighbor to the South? (Row below, same column)
             else
-                traits_neighbor = matrix_traits(row_active_region+1,(column_active_region-1)*f+1:column_active_region*f);
+                traits_neighbor = traits(row_active_region+1,(column_active_region-1)*f+1:column_active_region*f);
             end
             
         else 
             % Is the neighbor in the West? (Same row, column to the left)
             if neighbor_region == 1
-                traits_neighbor = matrix_traits(row_active_region,(column_active_region-2)*f+1:(column_active_region-1)*f);
+                traits_neighbor = traits(row_active_region,(column_active_region-2)*f+1:(column_active_region-1)*f);
             % Is the neighbor in the North? (Row above, same column)
             elseif neighbor_region == 2
-                traits_neighbor = matrix_traits(row_active_region-1,(column_active_region-1)*f+1:column_active_region*f);   
+                traits_neighbor = traits(row_active_region-1,(column_active_region-1)*f+1:column_active_region*f);   
             % Is the neighbor in the East? (Same row, column to the right)
             else 
-                traits_neighbor = matrix_traits(row_active_region,column_active_region*f+1:(column_active_region+1)*f);    
+                traits_neighbor = traits(row_active_region,column_active_region*f+1:(column_active_region+1)*f);    
             end
         end
     end
@@ -265,20 +265,19 @@ for sim = 1 : NSim
     end
           
     %% Save changes of active region into the traits matrix 
-    matrix_traits(row_active_region,(column_active_region-1)*f+1:column_active_region*f) = traits_active;
-    
-    %% For each region, compute the sum of its total traits (to obtain a n*n matrix)
-    for ii = 1 : n
-        indie_start_sum = vector_start_sum(ii);
-        indie_stop_sum = vector_stop_sum(ii);
-        
-        matrix_traits_sum(:,ii) = sum(matrix_traits(:,indie_start_sum:indie_stop_sum),2);
-    end
-        
+    traits(row_active_region,(column_active_region-1)*f+1:column_active_region*f) = traits_active;
+            
     
     %% Visualize graphically every 20 steps.
-    if mod(sim, 20) == 0
-        imagesc(matrix_traits_sum,color_limits)
+    if mod(sim, 20) == 0        
+        % For each region, compute the sum of its total traits
+        % (to obtain a n*n matrix).
+        for ii = 1 : n
+            indie_start_sum = vector_start_sum(ii);
+            indie_stop_sum = vector_stop_sum(ii); 
+            traits_sum(:,ii) = sum(traits(:,indie_start_sum:indie_stop_sum),2);       
+        end
+        imagesc(traits_sum, color_limits)
         % colorbar
         pause(0.01)
     end
