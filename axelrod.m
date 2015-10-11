@@ -1,46 +1,49 @@
+% Code for Axelrod's (1997) benchmark model of cultural dissemination.
 
 
-% Purpose: Code for Axelrod's (1997) benchmark model of cultural interaction
-
-
-%% Clean
+%% Clean.
 clc
 close all
 clear all
 
-%% Step 1: Define matrix of cultural traits
+%% Step 1: Define matrix of cultural traits.
 
-% 1.1 Define variables of benchmark model
-% Nr. regions per row
+% 1.1 Define variables of benchmark model.
+
+% Nr. regions per row.
 n = 10;
-% total nr. regions
+% Total nr. regions.
 tn = n^2;
-% Nr. features for each region = f
+% Nr. features for each region = f.
 f = 5;
-% Nr. different traits for each region = t
+% Nr. different traits for each region = t.
 t = 10;
-% Minimum value of trait
+% Minimum value of trait.
 a = 0;
-% Maximum value of trait
+% Maximum value of trait.
 b = 9;
 
-% 1.2 Generate matrix of traits
+% 1.2 Generate matrix of traits.
+
 % Randomly generate a matrix of (n*f)*(n*f) = (10*5)*(10*5) of uniformly
 % distributed numbers with values in the range [a,b] = [0,9]
-% where x = a + (a+b)*rand(n*f,n*f)
+% where x = a + (a+b)*rand(n*f,n*f).
 matrix_traits = a + (a+b)*rand(n,n*f);
-% Round up to get rid of decimals
+% Round up to get rid of decimals.
 matrix_traits = floor(matrix_traits);
 
-% Original matrix 
+% Original matrix.
 original_matrix = matrix_traits;
 
 
-% 1.3 Special regions (either corner or edge)
+% 1.3 Special regions (either corner or edge).
 vector_positions = 1 : tn;
 matrix_positions = reshape(vector_positions,n,n);
 matrix_positions = transpose(matrix_positions);
-all_special_positions = [matrix_positions(1,:) matrix_positions(n,:) matrix_positions(2:n-1,1)' matrix_positions(2:n-1,n)'];
+all_special_positions = [matrix_positions(1,:) ...
+                         matrix_positions(n,:) ...
+                         matrix_positions(2:n-1,1)' ...
+                         matrix_positions(2:n-1,n)'];
 all_special_positions = sort(all_special_positions);
 
 corner_positions = [1, n, (n-1)*n+1, n*n];
@@ -58,16 +61,19 @@ edge_East = matrix_positions(2:n-1,n)';
 edge_South = matrix_positions(n,2:n-1);
 
 
-%% Step 2: Model the interaction between regions
+%% Step 2: Model the interaction between regions.
+
 % This consists in: 
 % 2.1 Select randomly one active region (from 1 to 100)
-% 2.2 Select randomly a neighbor of the active region (from 1 to 4, where 1=West, 2=North, 3=East, 4=South)
+% 2.2 Select randomly a neighbor of the active region
+%     (from 1 to 4, where 1=West, 2=North, 3=East, 4=South)
 % 2.3 Compare the active region with its neighbor, compute similarity
-% percentage (sim = nr active trains in common/nr traits)
+%     percentage (sim = nr active trains in common/nr traits)
 % 2.4 If sim>0, select randomly one different trait and replace its value
-% with the value of the neighbor's trait
+%     with the value of the neighbor's trait
 
-% Probability interaction with neighbor belongs to [0, 0.2, 0.4, 0.6, 0.8, 1]
+% Probability of interaction with neighbor 
+% belongs to [0, 0.2, 0.4, 0.6, 0.8, 1].
 matrix_probability_interaction = zeros(f+1,f);
 matrix_probability_interaction(2,1) = 1;
 matrix_probability_interaction(3,1:2) = 1;
@@ -75,11 +81,11 @@ matrix_probability_interaction(4,1:3) = 1;
 matrix_probability_interaction(5,1:4) = 1;
 matrix_probability_interaction(6,1:5) = 1;
 
-% Vector position traits 
+% Vector position traits.
 vector_position_traits = 1 : f;
 
 
-% Repeat NSim times
+% Repeat NSim times.
 NSim = 530000;
 neighbor_vec = zeros(NSim,1);
 vector_start_sum = 1 : 5 : tn;
@@ -88,26 +94,27 @@ matrix_traits_sum = zeros(n,n);
 color_limits = [0 50];
 for sim = 1 : NSim
     
+    % Print sim step.
     sim
     
-    % Select radomly a region (from 1 to 100)
+    % Select radomly a region (from 1 to 100).
     region_active = floor(1 + tn*rand(1));
     % Where is this region placed in the matrix_traits? 
     rest_position_divided_by_0 = rem(region_active,n);
     if rest_position_divided_by_0 == 0
-        % Column
+        % Column.
         column_active_region = n;
-        % Row
+        % Row.
         row_active_region = floor(region_active/n);
     else
-        % Column 
+        % Column.
         column_active_region = rest_position_divided_by_0;
-        % Row
+        % Row.
         row_active_region = floor(region_active/n) + 1;
     end
     
 
-    % What are the traits of the active region? (A vector of length 5)
+    % What are the traits of the active region? (A vector of length 5).
     traits_active = matrix_traits(row_active_region,(column_active_region-1)*f+1:column_active_region*f);
     
     %% Select randomly a neighbor of the active region
@@ -115,16 +122,16 @@ for sim = 1 : NSim
     indie_special = isempty(intersect(all_special_positions,region_active));
     if indie_special ==  1
         neighbor_region = floor(1 + 4*rand(1));
-        % Is the neighbor in the West? (Same row, column to the left)
+        % Is the neighbor in the West? (Same row, column to the left).
         if neighbor_region == 1 
             traits_neighbor = matrix_traits(row_active_region,(column_active_region-2)*f+1:(column_active_region-1)*f);
-        % Is the neighbor in the North? (Row above, same column)
+        % Is the neighbor in the North? (Row above, same column).
         elseif neighbor_region == 2 
             traits_neighbor = matrix_traits(row_active_region-1,(column_active_region-1)*f+1:column_active_region*f);
-        % Is the neighbor in the East? (Same row, column to the right)
+        % Is the neighbor in the East? (Same row, column to the right).
         elseif neighbor_region == 3
             traits_neighbor = matrix_traits(row_active_region,column_active_region*f+1:(column_active_region+1)*f);
-        % Is the neighbor in the South? (Row below, same column)
+        % Is the neighbor in the South? (Row below, same column).
         else
             traits_neighbor = matrix_traits(row_active_region+1,(column_active_region-1)*f+1:column_active_region*f);
         end
@@ -132,7 +139,7 @@ for sim = 1 : NSim
         
         
         % If the active region is in a special position, account
-        % differently for the possible neighbors
+        % differently for the possible neighbors.
         
     %%%%%%%% Is the active region on the CORNER?
     elseif isempty(intersect(corner_positions,region_active)) == 0
@@ -269,10 +276,10 @@ for sim = 1 : NSim
     end
         
     
-    %% Visualize graphically
-    if mod(sim,20) == 0
+    %% Visualize graphically every 20 steps.
+    if mod(sim, 20) == 0
         imagesc(matrix_traits_sum,color_limits)
-        %colorbar
+        % colorbar
         pause(0.01)
     end
     
