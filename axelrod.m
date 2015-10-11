@@ -23,8 +23,11 @@ a = 0;
 % Maximum value of trait.
 b = 9;
 
+% Save a video of the simulation.
+makeVideo = 1;
+
 % Every x ticks the display is updated.
-DISPLAY_UPDATE_INTERVAL = 20;
+DISPLAY_UPDATE_INTERVAL = 100;
 
 % 1.2 Generate matrix of traits.
 
@@ -89,12 +92,21 @@ vector_position_traits = 1 : f;
 
 
 % Repeat NSim times.
-NSim = 530000;
+NSim = 150000;
 neighbor_vec = zeros(NSim,1);
 vector_start_sum = 1 : 5 : tn;
 vector_stop_sum = 5 : 5 : tn;
 tsum = zeros(n,n);
-color_limits = [0 50];
+color_limits = [0 40];
+%M = zeros(NSim,1);
+
+if (makeVideo)
+    % Get the handle of the figure
+    h = figure();
+    % Prepare the new file.
+    vidObj = VideoWriter('video.avi');
+    open(vidObj);
+end
 
 for sim = 1 : NSim
     
@@ -273,6 +285,7 @@ for sim = 1 : NSim
             
     
     %% Visualize graphically every 20 steps.
+    
     if mod(sim, DISPLAY_UPDATE_INTERVAL) == 0        
         % For each region, compute the sum of its total traits
         % (to obtain a n*n matrix).
@@ -283,11 +296,18 @@ for sim = 1 : NSim
         end
         imagesc(tsum, color_limits)
         % colorbar
+        
+        if (makeVideo)
+            currFrame = getframe(h);
+            writeVideo(vidObj,currFrame);
+        end
         pause(0.01)
-    end
-    
+   end
+   
 end
-    
 
-
+if (makeVideo)
+    % SAVE VIDEO FRAMES TO FILE
+    close(vidObj);
+end
 

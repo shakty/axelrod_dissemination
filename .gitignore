@@ -12,6 +12,7 @@ test
 
 log
 
+*.avi
 videos
 
 lsf.*
