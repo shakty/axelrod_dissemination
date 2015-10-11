@@ -23,6 +23,9 @@ a = 0;
 % Maximum value of trait.
 b = 9;
 
+% Every x ticks the display is updated.
+DISPLAY_UPDATE_INTERVAL = 20;
+
 % 1.2 Generate matrix of traits.
 
 % Randomly generate a matrix of (n*f)*(n*f) = (10*5)*(10*5) of uniformly
@@ -90,8 +93,9 @@ NSim = 530000;
 neighbor_vec = zeros(NSim,1);
 vector_start_sum = 1 : 5 : tn;
 vector_stop_sum = 5 : 5 : tn;
-traits_sum = zeros(n,n);
+tsum = zeros(n,n);
 color_limits = [0 50];
+
 for sim = 1 : NSim
     
     % Print sim step.
@@ -269,15 +273,15 @@ for sim = 1 : NSim
             
     
     %% Visualize graphically every 20 steps.
-    if mod(sim, 20) == 0        
+    if mod(sim, DISPLAY_UPDATE_INTERVAL) == 0        
         % For each region, compute the sum of its total traits
         % (to obtain a n*n matrix).
         for ii = 1 : n
             indie_start_sum = vector_start_sum(ii);
             indie_stop_sum = vector_stop_sum(ii); 
-            traits_sum(:,ii) = sum(traits(:,indie_start_sum:indie_stop_sum),2);       
+            tsum(:,ii) = sum(traits(:,indie_start_sum:indie_stop_sum),2);       
         end
-        imagesc(traits_sum, color_limits)
+        imagesc(tsum, color_limits)
         % colorbar
         pause(0.01)
     end
